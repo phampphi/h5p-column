@@ -1,6 +1,7 @@
 .h5p-column-content {
   position: relative;
 }
+
 .h5p-column-content.h5p-table,
 .h5p-column-content.h5p-advanced-text,
 .h5p-column-content.h5p-link {
@@ -9,29 +10,34 @@
   padding-left: 1em;
   padding-right: 1em;
 }
-.h5p-column-content.h5p-video > video {
+
+.h5p-column-content.h5p-video>video {
   width: 100%;
 }
 
 .h5p-column-ruler {
   border-bottom: 2px solid #eee;
 }
+
 .h5p-column-space-before-n-after {
   margin: 1em 0;
 }
+
 .h5p-column-space-before {
   margin: 1em 0 0;
 }
+
 .h5p-column-space-after {
   margin: 0 0 1em;
 }
 
 /* Align question texts when there's no frame */
-.h5p-no-frame > .h5p-column > div > .h5p-question > * {
+.h5p-no-frame>.h5p-column>div>.h5p-question>* {
   margin-left: 0;
   margin-right: 0;
 }
-.h5p-no-frame > .h5p-column > div > .h5p-question .h5p-question-image-wrap {
+
+.h5p-no-frame>.h5p-column>div>.h5p-question .h5p-question-image-wrap {
   -webkit-transform: translate(0, 1em);
   transform: translate(0, 1em);
   margin: 0 0 1em 0;
@@ -39,44 +45,47 @@
 }
 
 /* Special fixes for SCS */
-.h5p-no-frame > .h5p-column > div > .h5p-single-choice-set .h5p-sc-alternatives,
-.h5p-no-frame > .h5p-column > div > .h5p-single-choice-set .h5p-sc-question {
+.h5p-no-frame>.h5p-column>div>.h5p-single-choice-set .h5p-sc-alternatives,
+.h5p-no-frame>.h5p-column>div>.h5p-single-choice-set .h5p-sc-question {
   margin-left: 0;
   margin-right: 0;
 }
-.h5p-no-frame > .h5p-column > div > .h5p-single-choice-set .h5p-sc-sound-control {
+
+.h5p-no-frame>.h5p-column>div>.h5p-single-choice-set .h5p-sc-sound-control {
   top: 0;
   right: 0;
 }
 
 /* QS is a bit to eager... */
-.h5p-no-frame > .h5p-column > div > .h5p-column-content > .questionset .h5p-question > *:first-child {
+.h5p-no-frame>.h5p-column>div>.h5p-column-content>.questionset .h5p-question>*:first-child {
   margin-top: 1em;
 }
 
 /* Align text content when there's no frame */
-.h5p-no-frame > .h5p-column > div > .h5p-table,
-.h5p-no-frame > .h5p-column > div > .h5p-advanced-text,
-.h5p-no-frame > .h5p-column > div > .h5p-link {
+.h5p-no-frame>.h5p-column>div>.h5p-table,
+.h5p-no-frame>.h5p-column>div>.h5p-advanced-text,
+.h5p-no-frame>.h5p-column>div>.h5p-link {
   padding-left: 0;
   padding-right: 0;
 }
 
 /* Align accordion texts when there's no frame */
-.h5p-no-frame > .h5p-column > div > .h5p-accordion {
+.h5p-no-frame>.h5p-column>div>.h5p-accordion {
   border-left: 1px solid #eeeeee;
   border-right: 1px solid #eeeeee;
 }
 
 /* Memory Game */
-.h5p-no-frame > .h5p-column > div > .h5p-memory-game .h5p-status {
+.h5p-no-frame>.h5p-column>div>.h5p-memory-game .h5p-status {
   padding-left: 0;
   padding-right: 0;
 }
-.h5p-no-frame > .h5p-column > div > .h5p-memory-game .h5p-feedback {
+
+.h5p-no-frame>.h5p-column>div>.h5p-memory-game .h5p-feedback {
   margin: 0;
 }
-.h5p-no-frame > .h5p-column > div > .h5p-memory-game .h5p-memory-card {
+
+.h5p-no-frame>.h5p-column>div>.h5p-memory-game .h5p-memory-card {
   margin-left: 0;
   margin-right: 2em;
 }
@@ -85,4 +94,82 @@
 .h5p-interactive-book video::-webkit-media-controls-fullscreen-button,
 .h5p-interactive-book .h5p-my-fullscreen-button-enter {
   display: none;
+}
+
+.h5p-joubelui-button.hidden {
+  display: none;
+}
+
+.h5p-column .h5p-question-prev,
+.h5p-column .h5p-question-next {
+  padding: 0.5em 0;
+  width: 2.1875em;
+}
+
+.h5p-column .h5p-question-prev,
+.h5p-column .h5p-question-finish,
+.h5p-column .h5p-question-next {
+  float: right;
+}
+
+.h5p-column .h5p-question-next:before {
+  content: "\f054";
+  padding-right: 0;
+  position: relative;
+  left: 2px;
+}
+
+.h5p-column .h5p-question-prev:before {
+  content: "\f053";
+  padding-right: 0;
+  position: relative;
+  left: -2px;
+}
+
+.h5p-column .audio-transcript-container {
+  margin: 0 1em 0.5em 0;
+  padding: 1em;
+  background: #FAFAFA;
+}
+
+.h5p-column .audio-transcript-container.hidden {
+  display: none;
+}
+
+.h5p-column .audio-transcript-title {
+  font-size: 1.125em;
+  margin-bottom: 0.5em;
+  text-align: center;
+}
+
+.h5p-column .audio-transcript-text-container {
+  background: #FFFFFF;
+  border: 1px solid #e0e0e0;
+  overflow: auto;
+  overflow-x: hidden;
+  list-style: none;
+  padding: 0.5em 1em 0.5em 1em;
+  margin: 0;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.h5p-column .audio-transcript-text {
+  padding: 0.5em 1em 0.5em 1em;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.h5p-column.has-transcript {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.h5p-column .audio-transcript-container.horizontal {
+  margin: 0 0em 0.5em 0.5em;
+  width: 47%;
+}
+
+.h5p-column .wrapper.horizontal {
+  width: 47%;
 }

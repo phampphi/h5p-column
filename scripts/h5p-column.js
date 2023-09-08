@@ -11,6 +11,7 @@ H5P.Column = (function (EventDispatcher) {
   function Column(params, id, data) {
     /** @alias H5P.Column# */
     var self = this;
+    var $ = H5P.jQuery;
 
     // We support events by extending this class
     EventDispatcher.call(self);
@@ -20,6 +21,8 @@ H5P.Column = (function (EventDispatcher) {
     if (params.useSeparators === undefined) {
       params.useSeparators = true;
     }
+    if (params.behaviour == undefined) params.behaviour = {};
+    if (params.behaviour.transcriptDisplayMode == undefined) params.behaviour.transcriptDisplayMode = 'vertical';
 
     this.contentData = data;
 
@@ -41,6 +44,8 @@ H5P.Column = (function (EventDispatcher) {
 
     // Keep track of last content's margin state
     var previousHasMargin;
+
+    var transcriptContainer, btnContainer;
 
     /**
      * Calculate score and trigger completed event.
@@ -71,6 +76,7 @@ H5P.Column = (function (EventDispatcher) {
     var trackScoring = function (taskIndex) {
       return function (event) {
         if (event.getScore() === null) {
+          self.trigger(event);
           return; // Skip, not relevant
         }
 
@@ -257,7 +263,9 @@ H5P.Column = (function (EventDispatcher) {
     var createHTML = function () {
       // Create wrapper
       wrapper = document.createElement('div');
-
+      wrapper.classList.add('wrapper');
+      console.log(params);
+      var override = params.behaviour;
       // Go though all contents
       for (var i = 0; i < params.content.length; i++) {
         var content = params.content[i];
@@ -272,6 +280,13 @@ H5P.Column = (function (EventDispatcher) {
 
           // Add separator between contents
           addSeparator(content.content.library.split(' ')[0], content.useSeparator);
+        }
+
+        content.content.params = content.content.params || {};
+        if (override) {
+          // Extend subcontent with the overrided settings.
+          content.content.params.behaviour = content.content.params.behaviour || {};
+          $.extend(content.content.params.behaviour, override);
         }
 
         // Add content
@@ -300,9 +315,19 @@ H5P.Column = (function (EventDispatcher) {
           disableFullscreen(instances[container.instanceIndex]);
         });
 
+      // Create transcript container
+      transcriptContainer = document.createElement('div');
+      transcriptContainer.classList.add('audio-transcript-container', 'hidden');
+      divTitle = document.createElement('div');
+      divTitle.classList.add('audio-transcript-title');
+      divTitle.innerHTML = 'Transcript';
+      transcriptContainer.appendChild(divTitle);
+
+      // Create buttons container
+      btnContainer = document.createElement('div');
 
       // Add to DOM
-      $container.addClass('h5p-column').html('').append(wrapper);
+      $container.addClass('h5p-column').html('').append(wrapper).append(transcriptContainer).append(btnContainer);
     };
 
     /**
@@ -323,7 +348,7 @@ H5P.Column = (function (EventDispatcher) {
         var instance = instances[i];
 
         if (instance.getCurrentState instanceof Function ||
-            typeof instance.getCurrentState === 'function') {
+          typeof instance.getCurrentState === 'function') {
 
           state.instances[i] = instance.getCurrentState();
         }
@@ -395,6 +420,7 @@ H5P.Column = (function (EventDispatcher) {
      * Contract.
      */
     self.showSolutions = function () {
+      var transcripts = [];
       instances.forEach(function (instance) {
         if (instance.toggleReadSpeaker) {
           instance.toggleReadSpeaker(true);
@@ -405,14 +431,28 @@ H5P.Column = (function (EventDispatcher) {
         if (instance.toggleReadSpeaker) {
           instance.toggleReadSpeaker(false);
         }
+        if (instance.getTranscript) {
+          transcripts.push(instance.getTranscript());
+        }
       });
+      self.showTranscript(transcripts);
+      self.trigger('resize');
     };
+
+    self.hideSolutions = function () {
+      transcriptContainer.classList.add('hidden');
+      transcriptContainer.classList.remove(params.behaviour.transcriptDisplayMode);
+      wrapper.classList.remove(params.behaviour.transcriptDisplayMode);
+      wrapper.parentElement.classList.remove('has-transcript');
+      self.trigger('resize');
+    }
 
     /**
      * Reset task.
      * Contract.
      */
     self.resetTask = function () {
+      self.hideSolutions();
       instances.forEach(function (instance) {
         if (instance.resetTask) {
           instance.resetTask();
@@ -480,6 +520,69 @@ H5P.Column = (function (EventDispatcher) {
       });
     };
 
+    /**
+     * Register buttons for the task.
+     *
+     * @param {string} id
+     * @param {string} text label
+     * @param {function} clicked
+     * @param {boolean} [visible=true]
+     * @param {Object} [options] Options for button
+     * @param {Object} [extras] Extra options
+     * @param {ConfirmationDialog} [extras.confirmationDialog] Confirmation dialog
+     * @param {Object} [extras.contentData] Content data
+     * @params {string} [extras.textIfSubmitting] Text to display if submitting
+     */
+    self.addButton = function (id, text, clicked, visible, options, extras) {
+      var button = document.createElement("button");
+      button.id = id;
+      button.innerHTML = text;
+      btnContainer.appendChild(button);
+      button.addEventListener("click", clicked);
+      button.classList.add('h5p-joubelui-button', `h5p-question-${id}`);
+      if (!visible) button.classList.add('hidden');
+    };
+
+    self.showButton = function (id) {
+      var button = btnContainer.querySelector('[id=' + id + ']');
+      button.classList.remove('hidden');
+    };
+
+    self.hideButton = function (id) {
+      var button = btnContainer.querySelector('[id=' + id + ']');
+      button.classList.add('hidden');
+    };
+
+    /**
+     * Stop the recording.
+     */
+    self.pauseMedia = function () {
+      instances.forEach(function (instance) {
+        if (instance.pauseMedia) {
+          instance.pauseMedia();
+        }
+      });
+    }
+
+    self.showTranscript = function (transcripts) {
+      var hasTranscript = false;
+      transcripts.forEach(function (transcript) {
+        if (!transcript) return;
+        hasTranscript = true;
+        divTs = document.createElement("div");
+        divTs.id = id || '';
+        divTs.classList.add('audio-transcript-text-container');
+        divTs.innerHTML = transcript;
+        transcriptContainer.appendChild(divTs);
+      });
+      if (hasTranscript) {
+        transcriptContainer.classList.remove('hidden');
+        transcriptContainer.classList.add(params.behaviour.transcriptDisplayMode);
+        wrapper.classList.add(params.behaviour.transcriptDisplayMode);
+        wrapper.parentElement.classList.add('has-transcript');
+      }
+    }
+
     // Resize children to fit inside parent
     bubbleDown(self, 'resize', instances);
 
@@ -490,6 +593,7 @@ H5P.Column = (function (EventDispatcher) {
 
     self.setActivityStarted();
   }
+
 
   Column.prototype = Object.create(EventDispatcher.prototype);
   Column.prototype.constructor = Column;

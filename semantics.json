@@ -1,5 +1,38 @@
 [
   {
+    "name": "behaviour",
+    "type": "group",
+    "label": "Behavioural settings.",
+    "importance": "low",
+    "description": "These options will let you control how the task behaves.",
+    "optional": true,
+    "fields": [
+      {
+        "name": "useSeparators",
+        "type": "boolean",
+        "label": "Use separators for each question",
+        "importance": "low"
+      },
+      {
+        "name": "transcriptDisplayMode",
+        "type": "select",
+        "importance": "low",
+        "label": "Specify how transcript should be display",
+        "default": "vertical",
+        "options": [
+          {
+            "value": "vertical",
+            "label": "Vertical"
+          },
+          {
+            "value": "horizontal",
+            "label": "Horizontal"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "name": "content",
     "label": "List of Column Content",
     "importance": "high",
